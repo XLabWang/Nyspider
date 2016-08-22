@@ -17,5 +17,6 @@ ret_buffer = create_string_buffer(15)
 #调用此函数之前，如果已经初始化成功过识别引擎函数 那么无需再调用初始化函数
 #GetVcode 识别函数 参数1为 VcodeInit 返回值 index 参数2为图片数据 参数3为图片大小 参数4为接收识别结果 需要给变量申请内存 如 ret_buffer = create_string_buffer(10)
 get_code_from_buffer = dll.GetVcode
-get_code_from_buffer(index, byref(img_buffer), len(img_buffer), byref(ret_buffer))
-print (ret_buffer.value.decode('utf-8'))
+get_code_from_buffer(index, byref(img_buffer), len(img_buffer),
+                     byref(ret_buffer))
+print(ret_buffer.value.decode('utf-8'))

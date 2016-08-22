@@ -14,6 +14,7 @@ import time
 from selenium import webdriver
 import os
 
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -99,14 +100,42 @@ class Ui_MainWindow(object):
         self.action.setText(_translate("MainWindow", "退出"))
 
 
-class Aso100(QtWidgets.QMainWindow,Ui_MainWindow):
+class Aso100(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
-        super(Aso100,self).__init__()
+        super(Aso100, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("ASO100数据采集")
-        self.genre={'购物': '6024', '图书': '6018', '游戏 ': '6014', '导航':'6010', '商品指南': '6022', '工具': '6002', '教育': '6017', '商务': '6000', '效率': '6007', '娱乐': '6016', '美食佳饮': '6023', '体育': '6004', '新闻': '6009', '摄影与录像': '6008', '社交': '6005', '参考': '6006', '财务': '6015', '报刊杂志': '6021', '天气': '6001', '旅游': '6003', '音乐': '6011', '生活': '6012', '医疗': '6020', '健康健美': '6013'}
-        self.brand={'付费':'paid','免费':'free','畅销':'grossing'}
-        self.country_labels={'中国':'cn','香港':'hk','台湾':'tw','美国':'us','日本':'jp','韩国':'kr'}
+        self.genre = {'购物': '6024',
+                      '图书': '6018',
+                      '游戏 ': '6014',
+                      '导航': '6010',
+                      '商品指南': '6022',
+                      '工具': '6002',
+                      '教育': '6017',
+                      '商务': '6000',
+                      '效率': '6007',
+                      '娱乐': '6016',
+                      '美食佳饮': '6023',
+                      '体育': '6004',
+                      '新闻': '6009',
+                      '摄影与录像': '6008',
+                      '社交': '6005',
+                      '参考': '6006',
+                      '财务': '6015',
+                      '报刊杂志': '6021',
+                      '天气': '6001',
+                      '旅游': '6003',
+                      '音乐': '6011',
+                      '生活': '6012',
+                      '医疗': '6020',
+                      '健康健美': '6013'}
+        self.brand = {'付费': 'paid', '免费': 'free', '畅销': 'grossing'}
+        self.country_labels = {'中国': 'cn',
+                               '香港': 'hk',
+                               '台湾': 'tw',
+                               '美国': 'us',
+                               '日本': 'jp',
+                               '韩国': 'kr'}
         self.basicInit()
 
     def basicInit(self):
@@ -116,7 +145,7 @@ class Aso100(QtWidgets.QMainWindow,Ui_MainWindow):
             self.comboBox_3.addItem(key)
 
     def getBrowser(self):
-        self.browser=webdriver.Firefox()
+        self.browser = webdriver.Firefox()
         self.browser.get('http://aso100.com/account/signin')
         self.browser.implicitly_wait(10)
         '''
@@ -126,89 +155,94 @@ class Aso100(QtWidgets.QMainWindow,Ui_MainWindow):
         '''
         time.sleep(3)
 
-    def writeToExcel(self,data,filename):
-        excel=Workbook(write_only=True)
-        sheet=excel.create_sheet()
+    def writeToExcel(self, data, filename):
+        excel = Workbook(write_only=True)
+        sheet = excel.create_sheet()
         for item in data:
             sheet.append(item)
         excel.save(filename)
 
-    def parser(self,html):
+    def parser(self, html):
         if '请完成验证后继续访问' in html:
             return False
-        table=BeautifulSoup(html,'html.parser').find_all('h5')
-        result=[]
+        table = BeautifulSoup(html, 'html.parser').find_all('h5')
+        result = []
         for item in table:
-            item=item.get_text()
-            rank=item.split('.')[0]
-            name=item.replace('%s.'%rank,'')
-            app=[name,rank]
+            item = item.get_text()
+            rank = item.split('.')[0]
+            name = item.replace('%s.' % rank, '')
+            app = [name, rank]
             result.append(app)
         return result
 
     def inputCap(self):
-        box=QtWidgets.QMessageBox.question(self,"滑动验证","请在浏览器中验证",QtWidgets.QMessageBox.Ok)
-        if box==QtWidgets.QMessageBox.Ok:
+        box = QtWidgets.QMessageBox.question(self, "滑动验证", "请在浏览器中验证",
+                                             QtWidgets.QMessageBox.Ok)
+        if box == QtWidgets.QMessageBox.Ok:
             return True
         else:
             return False
 
     def login(self):
-        box=QtWidgets.QMessageBox.question(self,"登录","请在浏览器中登录",QtWidgets.QMessageBox.Ok)
-        if box==QtWidgets.QMessageBox.Ok:
+        box = QtWidgets.QMessageBox.question(self, "登录", "请在浏览器中登录",
+                                             QtWidgets.QMessageBox.Ok)
+        if box == QtWidgets.QMessageBox.Ok:
             return True
         else:
             return False
 
     def getData(self):
-        de=self.comboBox.currentText()
-        key_brand=self.comboBox_2.currentText()
-        key_genre=self.comboBox_3.currentText()
-        country=self.comboBox_4.currentText()
-        country_type=self.country_labels[country]
-        url='http://aso100.com/rank/more/device/%s/country/%s/brand/%s/genre/%s/?page='%(de,country_type,self.brand[key_brand],self.genre[key_genre])
-        startpage=1
-        result=[]
-        date=time.strftime("%Y%m%d_%H%M%S",time.localtime())
-        filename=date+'_'+de+'_'+key_brand+'_'+key_genre+'_'+country+'.xlsx'
+        de = self.comboBox.currentText()
+        key_brand = self.comboBox_2.currentText()
+        key_genre = self.comboBox_3.currentText()
+        country = self.comboBox_4.currentText()
+        country_type = self.country_labels[country]
+        url = 'http://aso100.com/rank/more/device/%s/country/%s/brand/%s/genre/%s/?page=' % (
+            de, country_type, self.brand[key_brand], self.genre[key_genre])
+        startpage = 1
+        result = []
+        date = time.strftime("%Y%m%d_%H%M%S", time.localtime())
+        filename = date + '_' + de + '_' + key_brand + '_' + key_genre + '_' + country + '.xlsx'
         try:
             os.mkdir(country)
         except:
             pass
         try:
-            os.mkdir("%s/%s"%(country,key_genre))
+            os.mkdir("%s/%s" % (country, key_genre))
         except:
             pass
-        while startpage<9:
+        while startpage < 9:
             try:
-                self.browser.get(url+str(startpage))
+                self.browser.get(url + str(startpage))
             except:
                 self.getBrowser()
                 self.login()
                 continue
             time.sleep(3)
             try:
-                html=self.browser.page_source
+                html = self.browser.page_source
             except:
                 self.getBrowser()
                 continue
-            apps=self.parser(html)
-            if apps==False:
+            apps = self.parser(html)
+            if apps == False:
                 self.inputCap()
                 continue
-            if len(apps)==0:
+            if len(apps) == 0:
                 break
             for app in apps:
-                result.append([de,key_brand]+app+[key_genre,country])
-            self.textBrowser.append(de+'-'+key_brand+'-'+key_genre+'-'+str(startpage)+'-ok\n')
-            startpage+=1
-        self.writeToExcel(result,'%s/%s/%s'%(country,key_genre,filename))
-        self.textBrowser.append(de+'-'+key_brand+'-'+key_genre+'-ok\n')
+                result.append([de, key_brand] + app + [key_genre, country])
+            self.textBrowser.append(de + '-' + key_brand + '-' + key_genre +
+                                    '-' + str(startpage) + '-ok\n')
+            startpage += 1
+        self.writeToExcel(result, '%s/%s/%s' % (country, key_genre, filename))
+        self.textBrowser.append(de + '-' + key_brand + '-' + key_genre +
+                                '-ok\n')
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     import sys
-    app=QtWidgets.QApplication(sys.argv)
-    management=Aso100()
+    app = QtWidgets.QApplication(sys.argv)
+    management = Aso100()
     management.show()
     sys.exit(app.exec_())

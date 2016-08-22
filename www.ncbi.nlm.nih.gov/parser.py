@@ -1,56 +1,63 @@
 from bs4 import BeautifulSoup
 import os
 
+
 def parser():
-    files=[]
+    files = []
     for filename in os.listdir('html'):
         files.append(filename)
-    files.sort(key=lambda x:int(x.replace('.html','')))
-    f=open('result.txt','a')
+    files.sort(key=lambda x: int(x.replace('.html', '')))
+    f = open('result.txt', 'a')
     for filename in files:
-        html=open('html/'+filename,'r').read()
+        html = open('html/' + filename, 'r').read()
         try:
-            table=BeautifulSoup(html,'lxml').find('div',{'class':'rprt_all'}).find_all('div',{'class':"rprt abstract"})
+            table = BeautifulSoup(html, 'lxml').find(
+                'div', {'class': 'rprt_all'}).find_all(
+                    'div', {'class': "rprt abstract"})
         except:
             continue
         for item in table:
-            cit=item.find('div',{'class':'cit'})
+            cit = item.find('div', {'class': 'cit'})
             try:
-                periodical=cit.find('a').get_text()
+                periodical = cit.find('a').get_text()
             except:
-                periodical='-'
+                periodical = '-'
             try:
-                date=cit.get_text().replace(periodical,'')
+                date = cit.get_text().replace(periodical, '')
             except:
-                date='-'
+                date = '-'
             try:
-                title=item.find('h1').get_text()
+                title = item.find('h1').get_text()
             except:
                 continue
             try:
-                auths=item.find('div',{'class':'auths'}).find_all('a')
+                auths = item.find('div', {'class': 'auths'}).find_all('a')
             except:
-                auths=[]
-            auth_num=len(auths)
-            auth_name=''
+                auths = []
+            auth_num = len(auths)
+            auth_name = ''
             for a in auths:
-                auth_name+=a.get_text()+';'
+                auth_name += a.get_text() + ';'
             try:
-                afflist=item.find('div',{'class':'afflist'}).find_all('li')
+                afflist = item.find('div', {'class': 'afflist'}).find_all('li')
             except:
-                afflist=''
-            auth_infor=''
+                afflist = ''
+            auth_infor = ''
             for li in afflist:
-                auth_infor+=li.get_text()+'||'
+                auth_infor += li.get_text() + '||'
             try:
-                abstract=item.find('div',{'class':'abstr'}).get_text()
+                abstract = item.find('div', {'class': 'abstr'}).get_text()
             except:
-                abstract=''
+                abstract = ''
             try:
-                pmid=item.find('div',{'class':'aux'}).find('a',{'ref':'aid_type=pmid'}).get_text()
+                pmid = item.find('div', {'class': 'aux'}).find(
+                    'a', {'ref': 'aid_type=pmid'}).get_text()
             except:
-                pmid='-'
-            f.write(str([pmid,periodical,date,title,auth_num,auth_name,auth_infor,abstract])+'\r\n')
-        print(filename,'-ok')
+                pmid = '-'
+            f.write(str([pmid, periodical, date, title, auth_num, auth_name,
+                         auth_infor, abstract]) + '\r\n')
+        print(filename, '-ok')
     f.close()
+
+
 parser()

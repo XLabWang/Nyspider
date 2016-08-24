@@ -1,15 +1,24 @@
-#coding:utf-8
+# coding:utf-8
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import re
-import xlwt3
+import xlwt
 import time
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.keys import Keys
+driver = webdriver.Firefox()
+driver.get("http://www.python.org")
+assert "Python" in driver.title
+elem = driver.find_element_by_name("q")
+elem.clear()
+elem.send_keys("pycon")
+elem.send_keys(Keys.RETURN)
+assert "No results found." not in driver.page_source
+driver.close()
 
 
 def get_products(browser):
-    count = 0
+
     urls = []
     while True:
         try:
@@ -39,8 +48,7 @@ def get_products(browser):
 
 
 def shopParser(html):
-    table = BeautifulSoup(html, 'lxml').find('div',
-                                             id='atfResults').find_all('li')
+    table = BeautifulSoup(html, 'lxml').find('div', id='atfResults').find_all('li')
     results = []
     for item in table:
         try:
@@ -143,7 +151,7 @@ def inforParser(html):
 
 
 def main():
-    excel = xlwt3.Workbook()
+    excel = xlwt.Workbook()
     sheet = excel.add_sheet('sheet')
     count = 0
     keys = ['title', 'commentsNumber', 'asin', 'date', 'Rank', 'feature', 'Des'
@@ -169,4 +177,4 @@ def main():
         excel.save('data.xls')
 
 
-main()
+# main()

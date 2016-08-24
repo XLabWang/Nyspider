@@ -1,13 +1,9 @@
-#coding:utf-8
+# coding:utf-8
 
 import requests
 import os
-import sqlite3
-import xlwt3
-from email import encoders
-from email.header import Header
+import xlwt
 from email.mime.text import MIMEText
-from email.utils import parseaddr, formataddr
 import smtplib
 import datetime
 
@@ -31,9 +27,9 @@ def get_image(image_url, image_name):
 
 def to_Excel():
     for filename in os.listdir('.'):
-        if (filename.endswith('txt')):
+        if filename.endswith('txt'):
             f_d = open(filename, 'r')
-            f_ex = xlwt3.Workbook()
+            f_ex = xlwt.Workbook()
             sheet = f_ex.add_sheet('one')
             count = 0
             for line in f_d.readlines():

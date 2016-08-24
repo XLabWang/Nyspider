@@ -1,9 +1,11 @@
-#coding:utf-8
+# coding:utf-8
 
 import requests
-import xlwt3
+import xlwt
 from bs4 import BeautifulSoup
-import re
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 class get_infor():
@@ -90,7 +92,8 @@ class get_urls():
             'Accept-Encoding': 'gzip, deflate',
             'DNT': 1,
             'Cookie':
-            'showNav=#nav-tab|0|1; navCtgScroll=0; _hc.v="\"23f85427-5787-47bd-9df4-4e831c7a4cae.1442049973\""; __utma=1.649416466.1442049979.1442049979.1442049979.1; __utmz=1.1442049979.1.1.utmcsr=baidu|utmccn=(organic)|utmcmd=organic; cy=1; cye=shanghai; s_ViewType=10; aburl=1; JSESSIONID=95881D627CA4C940D686AD118D776232; PHOENIX_ID=0a0308bc-14fda0ead2e-4e713c',
+            'showNav=#nav-tab|0|1; navCtgScroll=0; _hc.v="\"23f85427-5787-47bd-9df4-4e831c7a4cae.1442049973\"";'
+            ' __utma=1.649416466.1442049979.1442049979.1442049979.1; __utmz=1.1442049979.1.1.utmcsr=baidu|utmccn=(organic)|utmcmd=organic; cy=1; cye=shanghai; s_ViewType=10; aburl=1; JSESSIONID=95881D627CA4C940D686AD118D776232; PHOENIX_ID=0a0308bc-14fda0ead2e-4e713c',
             'Connection': 'keep-alive'
         }
 
@@ -106,9 +109,9 @@ class get_urls():
 
 class Main():
     def work(self):
-        self.f = xlwt3.Workbook()
-        self.sheet = self.f.add_sheet('sheet')
-        self.count = 0
+        f = xlwt.Workbook(encoding="utf-8")
+        sheet = f.add_sheet('sheet')
+        count = 0
         for page in range(50):
             get_url = get_urls(
                 'http://www.dianping.com/search/category/1/20/g187r12' + 'p' +
@@ -119,22 +122,23 @@ class Main():
                 try:
                     item = get_infor(url)
                     item.work()
-                except:
+                except Exception as e:
+                    print (e.message)
                     continue
                 if item.statue == 0:
                     continue
-                self.sheet.write(self.count, 0, '购物')
-                self.sheet.write(self.count, 1, '超市便利店')
-                self.sheet.write(self.count, 2, '闵行')
-                self.sheet.write(self.count, 3, item.area)
-                self.sheet.write(self.count, 4, item.title)
-                self.sheet.write(self.count, 5, item.address)
-                self.sheet.write(self.count, 6, item.tel)
-                self.sheet.write(self.count, 7, item.price)
-                self.sheet.write(self.count, 8, item.times)
-                self.sheet.write(self.count, 9, url)
-                self.count += 1
-                self.f.save('data.xls')
+                sheet.write(count, 0, '购物')
+                sheet.write(count, 1, '超市便利店')
+                sheet.write(count, 2, '闵行')
+                sheet.write(count, 3, item.area)
+                sheet.write(count, 4, item.title)
+                sheet.write(count, 5, item.address)
+                sheet.write(count, 6, item.tel)
+                sheet.write(count, 7, item.price)
+                sheet.write(count, 8, item.times)
+                sheet.write(count, 9, url)
+                count += 1
+                f.save('data.xls')
 
 
 def test():
@@ -147,3 +151,4 @@ def test():
 if __name__ == '__main__':
     work = Main()
     work.work()
+    # test()

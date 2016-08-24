@@ -1,4 +1,4 @@
-#coding:utf-8
+# coding:utf-8
 
 import requests
 from bs4 import BeautifulSoup
@@ -46,7 +46,7 @@ def get_profile(ID):
 
 
 def main():
-    f = open('person.txt', 'a', encoding='utf-8')
+    f = open('person.txt', 'a')
     statue = True
     for line in open('data.txt', 'r').readlines():
         line = line.replace('\n', '')
